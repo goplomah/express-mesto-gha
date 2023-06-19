@@ -13,8 +13,22 @@ const deleteCard = (req, res) => {
   return Card.findByIdAndRemove(cardById).then((card) => { res.send({ data: card }); }).catch(() => { res.send({ message: 'Карточка не найдена или указан не корректный id' }); });
 };
 
+const likeCard = (req, res) => {
+  const cardById = req.params._id;
+  const userById = req.user._id;
+  return Card.findByIdAndUpdate(cardById, { $addToSet: { likes: userById } }, { new: true }).then((card) => { res.send({ data: card }); }).catch(() => { res.send({ message: 'ошибка добавления лайка' }); });
+};
+
+const dislikeCard = (req, res) => {
+  const cardById = req.params._id;
+  const userById = req.user._id;
+  return Card.findByIdAndUpdate(cardById, { $pull: { likes: userById } }, { new: true }).then((card) => { res.send({ data: card }); }).catch(() => { res.send({ message: 'ошибка удаления лайка' }); });
+};
+
 module.exports = {
   getCards,
   createCard,
   deleteCard,
+  likeCard,
+  dislikeCard,
 };
