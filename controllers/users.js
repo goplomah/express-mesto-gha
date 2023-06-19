@@ -41,13 +41,31 @@ const createUser = (req, res) => {
 const updateProfile = (req, res) => {
   const userById = req.user._id;
   const { name, about } = req.body;
-  return User.findByIdAndUpdate(userById, { name, about }).then((user) => { res.send({ data: user }); }).catch(() => { res.status(500).send({ message: 'произошла ошибка обновдения аватара' }); });
+  User.findByIdAndUpdate(userById, { name, about }, { new: true })
+    .then((user) => {
+      res.status(201).send({ data: user });
+    })
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        return res.status(400).send({ message: 'переданны некорректные данные пользователя при обновлении профиля' });
+      }
+      return res.status(500).send({ message: 'произошла ошибка сервера' });
+    });
 };
 
 const updateAvatar = (req, res) => {
   const userById = req.user._id;
   const { avatar } = req.body;
-  return User.findByIdAndUpdate(userById, { avatar }).then((user) => { res.send({ data: user }); }).catch(() => { res.status(500).send({ message: 'ошибка обновления аватара пользователя' }); });
+  User.findByIdAndUpdate(userById, { avatar }, { new: true })
+    .then((user) => {
+      res.status(201).send({ data: user });
+    })
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        return res.status(400).send({ message: 'переданы некорректные данные при обновлении аватара' });
+      }
+      return res.status(500).send({ message: 'произошла ошибка сервера' });
+    });
 };
 
 module.exports = {
