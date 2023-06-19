@@ -10,7 +10,7 @@ mongoose
     useNewUrlParser: true,
   })
   .then(() => {
-    console.log('connected to mestodb');
+    // console.log('connected to mestodb');
   });
 
 const app = express();
@@ -28,5 +28,5 @@ app.use((req, res, next) => {
 app.use(routes);
 
 app.listen(PORT, () => {
-  console.log(`App listening on port ${PORT}`);
+  // console.log(`App listening on port ${PORT}`);
 });
