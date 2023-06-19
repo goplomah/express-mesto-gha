@@ -22,10 +22,15 @@ const createCard = (req, res) => {
 const deleteCard = (req, res) => {
   const cardById = req.params._id;
   Card.findByIdAndRemove(cardById)
-    .then((card) => { res.send({ data: card }); })
+    .then((card) => {
+      if (card) {
+        return res.send({ data: card });
+      }
+      return res.status(404).send({ message: 'карточка с указанным _id не найдена' });
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(404).send({ message: 'карточка с указанным _id не найдена' });
+        return res.status(400).send({ message: 'передан несуществующий _id карточки' });
       }
       return res.status(500).send({ message: 'произошла ошибка сервера' });
     });
