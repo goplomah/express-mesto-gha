@@ -1,6 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+// eslint-disable-next-line import/no-extraneous-dependencies
+const helmet = require('helmet');
 const routes = require('./routes/index');
 
 const { PORT = 3000 } = process.env;
@@ -16,6 +18,8 @@ mongoose
 const app = express();
 
 app.use(bodyParser.json());
+
+app.use(helmet());
 
 app.use((req, res, next) => {
   req.user = {

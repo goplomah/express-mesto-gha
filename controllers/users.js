@@ -14,7 +14,7 @@ const getUserById = (req, res) => {
   User.findById(req.params._id)
     .then((user) => {
       if (user) {
-        return res.status(200).send({ data: user });
+        return res.send({ data: user });
       }
       return res.status(404).send({ message: 'пользователь по указанному id не найден' });
     })
@@ -43,7 +43,7 @@ const updateProfile = (req, res) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(userById, { name, about }, { new: true, runValidators: true })
     .then((user) => {
-      res.status(200).send({ data: user });
+      res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -58,7 +58,7 @@ const updateAvatar = (req, res) => {
   const { avatar } = req.body;
   User.findByIdAndUpdate(userById, { avatar }, { new: true, runValidators: true })
     .then((user) => {
-      res.status(200).send({ data: user });
+      res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
