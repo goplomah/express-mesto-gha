@@ -4,6 +4,19 @@ const validator = require('validator');
 
 const userSchema = new mongoose.Schema(
   {
+    email: {
+      type: String,
+      required: [true, 'поле "email" должно быть заполнено'],
+      unique: true,
+      validate: {
+        validator: (v) => validator.isEmail(v),
+      },
+    },
+    password: {
+      type: String,
+      required: true,
+      minlength: 10,
+    },
     name: {
       type: String,
       minlength: [2, 'минимальная длина поля "name" - 2'],
