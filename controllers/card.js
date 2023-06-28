@@ -32,7 +32,7 @@ const deleteCard = (req, res) => {
         return res.status(403).send({ message: 'У вас нет прав на удаление чужой карточки' });
       }
       Card.findByIdAndRemove(cardById)
-        .then((cardData) => { res.status(200).send({ data: cardData }); })
+        .then(() => { res.status(200).send({ data: card }); })
         .catch((err) => {
           if (err.name === 'CastError') {
             return res.status(400).send({ message: 'передан несуществующий _id карточки' });
