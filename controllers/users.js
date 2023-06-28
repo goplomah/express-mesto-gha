@@ -95,7 +95,7 @@ const login = (req, res) => {
     });
 };
 
-const getInfoCurrentUser = (req, res, next) => {
+const getInfoCurrentUser = (req, res) => {
   User.findById(req.user._id)
     // eslint-disable-next-line consistent-return
     .then((user) => {
@@ -104,7 +104,9 @@ const getInfoCurrentUser = (req, res, next) => {
       }
       res.send({ data: user });
     })
-    .catch(next);
+    .catch((err) => {
+      res.status(401).send({ message: err.message });
+    });
 };
 
 module.exports = {
