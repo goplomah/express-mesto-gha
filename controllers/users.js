@@ -95,6 +95,18 @@ const login = (req, res) => {
     });
 };
 
+const getInfoCurrentUser = (req, res, next) => {
+  User.findById(req.user._id)
+    // eslint-disable-next-line consistent-return
+    .then((user) => {
+      if (!user) {
+        return res.status(404).send({ message: 'пользователь не найден' });
+      }
+      res.send({ data: user });
+    })
+    .catch(next);
+};
+
 module.exports = {
   getUsers,
   getUserById,
@@ -102,4 +114,5 @@ module.exports = {
   updateProfile,
   updateAvatar,
   login,
+  getInfoCurrentUser,
 };
