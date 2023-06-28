@@ -21,18 +21,25 @@ const createCard = (req, res) => {
 
 const deleteCard = (req, res) => {
   const cardById = req.params._id;
-  Card.findByIdAndRemove(cardById)
+  const userById = req.user._id;
+  Card.findById(cardById)
+    // eslint-disable-next-line consistent-return
     .then((card) => {
-      if (card) {
-        return res.send({ data: card });
+      if (!card) {
+        return res.status(404).send({ message: 'карточка с указанным id не найдена' });
       }
-      return res.status(404).send({ message: 'карточка с указанным _id не найдена' });
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        return res.status(400).send({ message: 'передан несуществующий _id карточки' });
+      if (card.owner.toString() !== userById) {
+        return res.status(403).send({ message: 'У вас нет прав на удаление чужой карточки' });
       }
-      return res.status(500).send({ message: 'произошла ошибка сервера' });
+      Card.findByIdAndRemove(cardById)
+        // eslint-disable-next-line no-shadow
+        .then((card) => { res.status(200).send({ data: card }); })
+        .catch((err) => {
+          if (err.name === 'CastError') {
+            return res.status(400).send({ message: 'передан несуществующий _id карточки' });
+          }
+          return res.status(500).send({ message: 'произошла ошибка сервера' });
+        });
     });
 };
 
