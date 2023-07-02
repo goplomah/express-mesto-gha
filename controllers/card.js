@@ -51,7 +51,7 @@ const likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(cardById, { $addToSet: { likes: userById } }, { new: true })
     .then((card) => {
       if (card) {
-        return res.send({ data: card });
+        return res.status(201).send({ data: card });
       }
       return next(new NotFoundError('передан несуществующий _id карточки'));
     })
