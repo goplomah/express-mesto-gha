@@ -43,7 +43,10 @@ const createUser = (req, res, next) => {
       });
     })
     .then((user) => {
-      res.status(201).send({ data: user });
+      const { _id } = user;
+      res.status(201).send({
+        _id, email, name, about, avatar,
+      });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
