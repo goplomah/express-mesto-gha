@@ -53,7 +53,7 @@ const likeCard = (req, res, next) => {
       if (card) {
         return res.status(201).send({ data: card });
       }
-      return next(new NotFoundError('передан несуществующий _id карточки'));
+      throw new NotFoundError('передан несуществующий _id карточки');
     })
     .catch((err) => {
       if (err.name === 'CastError') {
