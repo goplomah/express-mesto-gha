@@ -30,6 +30,12 @@ app.use(helmet());
 // });
 
 app.use(routes);
+app.use((err, req, res, next) => {
+  const { statusCode } = err;
+  const message = statusCode === 500 ? 'на сервере произошла ошибка' : err.message;
+  res.status(statusCode).send({ message });
+  next();
+});
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);

@@ -3,34 +3,35 @@ const bcrypt = require('bcryptjs');
 // eslint-disable-next-line import/no-extraneous-dependencies
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const NotFoundError = require('../errors/NotFoundError');
+const ValidationError = require('../errors/ValidationError');
+const DuplicateError = require('../errors/DuplicateError');
 
-const getUsers = (req, res) => {
+const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => {
       res.send({ data: users });
     })
-    .catch(() => {
-      res.status(500).send({ message: 'произошла ошибка сервера' });
-    });
+    .catch(next);
 };
 
-const getUserById = (req, res) => {
+const getUserById = (req, res, next) => {
   User.findById(req.params._id)
     .then((user) => {
       if (user) {
         return res.send({ data: user });
       }
-      return res.status(404).send({ message: 'пользователь по указанному id не найден' });
+      throw new NotFoundError('пользоватедб с указанным _id не найден');
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(400).send({ message: 'переданны некорректные данные id при запросе пользователя' });
+        return next(new ValidationError('переданны некорректные данные id при запросе пользователя'));
       }
-      return res.status(500).send({ message: 'произошла ошибка сервера' });
+      return next(err);
     });
 };
 
-const createUser = (req, res) => {
+const createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
@@ -46,13 +47,16 @@ const createUser = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: 'переданы некорректные данные при создании пользователя' });
+        return next(new ValidationError('переданы некорректные данные при создании пользователя'));
       }
-      return res.status(500).send({ message: 'произошла ошибка сервера' });
+      if (err.code === 11000) {
+        return next(new DuplicateError('gользователь с такой почтой уже существует'));
+      }
+      return next(err);
     });
 };
 
-const updateProfile = (req, res) => {
+const updateProfile = (req, res, next) => {
   const userById = req.user._id;
   const { name, about } = req.body;
   User.findByIdAndUpdate(userById, { name, about }, { new: true, runValidators: true })
@@ -61,13 +65,13 @@ const updateProfile = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: 'переданны некорректные данные пользователя при обновлении профиля' });
+        return next(new ValidationError('переданны некорректные данные пользователя при обновлении профиля'));
       }
-      return res.status(500).send({ message: 'произошла ошибка сервера' });
+      return next(err);
     });
 };
 
-const updateAvatar = (req, res) => {
+const updateAvatar = (req, res, next) => {
   const userById = req.user._id;
   const { avatar } = req.body;
   User.findByIdAndUpdate(userById, { avatar }, { new: true, runValidators: true })
@@ -76,13 +80,13 @@ const updateAvatar = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: 'переданы некорректные данные при обновлении аватара' });
+        return next(new ValidationError('переданы некорректные данные при обновлении аватара'));
       }
-      return res.status(500).send({ message: 'произошла ошибка сервера' });
+      return next(err);
     });
 };
 
-const login = (req, res) => {
+const login = (req, res, next) => {
   const { email, password } = req.body;
 
   return User.findUserByCredentials(email, password)
@@ -90,23 +94,19 @@ const login = (req, res) => {
       const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
       res.send({ token });
     })
-    .catch((err) => {
-      res.status(401).send({ message: err.message });
-    });
+    .catch(next);
 };
 
-const getInfoCurrentUser = (req, res) => {
+const getInfoCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
     // eslint-disable-next-line consistent-return
     .then((user) => {
       if (!user) {
-        return res.status(404).send({ message: 'пользователь не найден' });
+        return next(new ValidationError('пользователь не найден'));
       }
       res.send({ data: user });
     })
-    .catch((err) => {
-      res.status(401).send({ message: err.message });
-    });
+    .catch(next);
 };
 
 module.exports = {
