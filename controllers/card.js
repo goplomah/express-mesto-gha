@@ -71,7 +71,7 @@ const dislikeCard = (req, res, next) => {
       if (card) {
         return res.send({ data: card });
       }
-      return next(new ValidationError('передан несуществующий _id карточки'));
+      return next(new NotFoundError('передан несуществующий _id карточки'));
     })
     .catch((err) => {
       if (err.name === 'CastError') {
