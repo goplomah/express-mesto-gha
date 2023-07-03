@@ -102,7 +102,7 @@ const getInfoCurrentUser = (req, res, next) => {
     // eslint-disable-next-line consistent-return
     .then((user) => {
       if (!user) {
-        return next(new ValidationError('пользователь не найден'));
+        return next(new NotFoundError('пользователь не найден'));
       }
       res.send({ data: user });
     })
