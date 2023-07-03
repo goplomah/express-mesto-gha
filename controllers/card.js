@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 const Card = require('../models/card');
 const ValidationError = require('../errors/ValidationError');
 const ForbiddenError = require('../errors/ForbiddenError');
@@ -26,7 +27,6 @@ const deleteCard = (req, res, next) => {
   const cardById = req.params._id;
   const userById = req.user._id;
   Card.findById(cardById)
-    // eslint-disable-next-line consistent-return
     .then((card) => {
       if (!card) {
         return next(new NotFoundError('карточка с указанным id не найдена'));
