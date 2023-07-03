@@ -21,7 +21,7 @@ const getUserById = (req, res, next) => {
       if (user) {
         return res.send({ data: user });
       }
-      throw new NotFoundError('пользоватедб с указанным _id не найден');
+      throw new NotFoundError('пользователь с указанным _id не найден');
     })
     .catch((err) => {
       if (err.name === 'CastError') {
