@@ -26,9 +26,8 @@ app.use(helmet());
 app.use(routes);
 app.use(errors());
 app.use((err, req, res, next) => {
-  const { statusCode = 500 } = err;
-  const message = statusCode === 500 ? 'на сервере произошла ошибка' : err.message;
-  res.status(statusCode).send({ message });
+  const { statusCode = 500, message } = err;
+  res.status(statusCode).send({ message: statusCode === 500 ? 'на сервере произошла ошибка' : message });
   next();
 });
 
