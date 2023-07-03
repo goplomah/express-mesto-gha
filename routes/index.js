@@ -7,11 +7,6 @@ const { login, createUser } = require('../controllers/users');
 const { auth } = require('../middlewares/auth');
 const NotFoundError = require('../errors/NotFoundError');
 
-// router.get('/', (req, res) => {
-//   res.status(200);
-//   res.send('hello');
-// });
-
 router.post('/signin', celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
