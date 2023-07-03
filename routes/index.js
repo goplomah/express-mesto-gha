@@ -5,6 +5,7 @@ const userRouter = require('./users');
 const cardRouter = require('./card');
 const { login, createUser } = require('../controllers/users');
 const { auth } = require('../middlewares/auth');
+const NotFoundError = require('../errors/NotFoundError');
 
 router.get('/', (req, res) => {
   res.status(200);
@@ -28,8 +29,8 @@ router.post('/signup', celebrate({
 }), createUser);
 router.use('/users', auth, userRouter);
 router.use('/cards', auth, cardRouter);
-router.use('*', (req, res) => {
-  res.status(404).send({ message: 'упс...такой странички не существует)))' });
+router.use('*', () => {
+  throw new NotFoundError('упс...такой странички не существует)))');
 });
 
 module.exports = router;
