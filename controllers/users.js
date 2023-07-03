@@ -43,9 +43,8 @@ const createUser = (req, res, next) => {
       });
     })
     .then((user) => {
-      const { _id } = user;
       res.status(201).send({
-        _id, email, name, about, avatar,
+        data: user,
       });
     })
     .catch((err) => {
