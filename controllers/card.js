@@ -35,7 +35,7 @@ const deleteCard = (req, res, next) => {
         throw new ForbiddenError('У вас нет прав на удаление чужой карточки');
       }
       Card.findByIdAndRemove(cardById)
-        .then(() => { res.status(200).send({ data: card }); })
+        .then(() => res.status(200).send({ data: card }))
         .catch((err) => {
           if (err.name === 'CastError') {
             return next(new ValidationError('передан несуществующий _id карточки'));
