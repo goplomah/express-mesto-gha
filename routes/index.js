@@ -24,8 +24,7 @@ router.post('/signup', celebrate({
 }), createUser);
 router.use('/users', auth, userRouter);
 router.use('/cards', auth, cardRouter);
-router.use('*', () => {
-  throw new NotFoundError('упс...такой странички не существует)))');
-});
+// eslint-disable-next-line no-unused-vars
+router.use('*', (req, res, next) => next(new NotFoundError('упс...такой странички не существует)))')));
 
 module.exports = router;
