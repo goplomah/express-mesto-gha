@@ -1,28 +1,14 @@
 const router = require('express').Router();
 // eslint-disable-next-line import/no-extraneous-dependencies
-const { Joi, celebrate } = require('celebrate');
 const {
   getUsers, getUserById, updateProfile, updateAvatar, getInfoCurrentUser,
 } = require('../controllers/users');
-const regexUrl = require('../utils/regex');
+const { getUserByIdValidation, updateProfileValidation, updateAvatarValidation } = require('../middlewares/validationRoutes');
 
 router.get('/', getUsers);
 router.get('/me', getInfoCurrentUser);
-router.get('/:_id', celebrate({
-  params: Joi.object().keys({
-    _id: Joi.string().required().hex().length(24),
-  }),
-}), getUserById);
-router.patch('/me', celebrate({
-  body: Joi.object().keys({
-    name: Joi.string().min(2).max(30).required(),
-    about: Joi.string().min(2).max(30).required(),
-  }),
-}), updateProfile);
-router.patch('/me/avatar', celebrate({
-  body: Joi.object().keys({
-    avatar: Joi.string().required().pattern(regexUrl),
-  }),
-}), updateAvatar);
+router.get('/:_id', getUserByIdValidation, getUserById);
+router.patch('/me', updateProfileValidation, updateProfile);
+router.patch('/me/avatar', updateAvatarValidation, updateAvatar);
 
 module.exports = router;
