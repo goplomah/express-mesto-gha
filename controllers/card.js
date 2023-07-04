@@ -23,53 +23,27 @@ const createCard = (req, res, next) => {
     });
 };
 
-const deleteCard = ((req, res, next) => {
-  const userId = req.user._id;
-  const removeCard = () => {
-    Card.findByIdAndRemove(req.params._id)
-      .then((cardData) => {
-        res.send({ data: cardData });
-      })
-      .catch(next);
-  };
-  Card.findById(req.params._id)
-    .then((cardData) => {
-      if (!cardData) {
-        throw new NotFoundError('Приехали! Пользователь не найден!');
+const deleteCard = (req, res, next) => {
+  const cardById = req.params._id;
+  const userById = req.user._id;
+  Card.findById(cardById)
+    .then((card) => {
+      if (!card) {
+        return next(new NotFoundError('карточка с указанным id не найдена'));
       }
-      if (cardData.owner.toString() !== userId) {
-        throw new ForbiddenError('Приехали! Не имеете права удалять чужую карточку!');
+      if (card.owner.toString() !== userById) {
+        return next(new ForbiddenError('У вас нет прав на удаление чужой карточки'));
       }
-      return removeCard();
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new ValidationError('Приехали! Некорректное айди!'));
-      } else next(err);
+      Card.findByIdAndRemove(cardById)
+        .then((cardData) => res.status(200).send({ data: cardData }))
+        .catch((err) => {
+          if (err.name === 'CastError') {
+            return next(new ValidationError('передан несуществующий _id карточки'));
+          }
+          return next(err);
+        });
     });
-});
-// (req, res, next) => {
-//   const cardById = req.params._id;
-//   const userById = req.user._id;
-//   Card.findById(cardById)
-//     .then((card) => {
-//       if (!card) {
-//         return next(new NotFoundError('карточка с указанным id не найдена'));
-//       }
-//       if (card.owner.toString() !== userById) {
-//         return next(new ForbiddenError('У вас нет прав на удаление чужой карточки'));
-//       }
-//       Card.findByIdAndRemove(cardById)
-//         .then((cardData) => res.status(200).send({ data: cardData }))
-//         .catch((err) => {
-//           if (err.name === 'CastError') {
-//             return next(new ValidationError('передан несуществующий _id карточки'));
-//           }
-//           return next(err);
-//         });
-//     })
-//     .catch(next);
-// };
+};
 
 const likeCard = (req, res, next) => {
   const cardById = req.params._id;

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 // eslint-disable-next-line import/no-extraneous-dependencies
-// const validator = require('validator');
+const validator = require('validator');
 // eslint-disable-next-line import/no-extraneous-dependencies
 const bcrypt = require('bcryptjs');
 const UnauthorizationError = require('../errors/UnauthorizationError');
@@ -9,12 +9,11 @@ const userSchema = new mongoose.Schema(
   {
     email: {
       type: String,
-      required: true,
       unique: true,
-      // required: [true, 'поле "email" должно быть заполнено'],
-      // validate: {
-      //   validator: (v) => validator.isEmail(v),
-      // },
+      required: [true, 'поле "email" должно быть заполнено'],
+      validate: {
+        validator: (v) => validator.isEmail(v),
+      },
     },
     password: {
       type: String,
