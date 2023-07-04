@@ -34,7 +34,7 @@ const deleteCard = (req, res, next) => {
       if (card.owner.toString() !== userById) {
         return next(new ForbiddenError('У вас нет прав на удаление чужой карточки'));
       }
-      Card.findByIdAndRemove(card)
+      Card.deleteOne(card)
         .then(() => res.send({ data: card }))
         .catch((err) => {
           if (err.name === 'CastError') {
@@ -42,7 +42,8 @@ const deleteCard = (req, res, next) => {
           }
           return next(err);
         });
-    });
+    })
+    .catch(next);
 };
 
 const likeCard = (req, res, next) => {
