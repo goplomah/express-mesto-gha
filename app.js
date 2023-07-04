@@ -5,6 +5,7 @@ const helmet = require('helmet');
 // eslint-disable-next-line import/no-extraneous-dependencies
 const { errors } = require('celebrate');
 const routes = require('./routes/index');
+const handlerCentralError = require('./middlewares/handlerCentralError');
 
 const { PORT = 3000 } = process.env;
 
@@ -24,11 +25,7 @@ app.use(helmet());
 
 app.use(routes);
 app.use(errors());
-app.use((err, req, res, next) => {
-  const { statusCode = 500 } = err;
-  res.status(statusCode).send({ message: statusCode === 500 ? 'на сервере произошла ошибка' : err.message });
-  next();
-});
+app.use(handlerCentralError);
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
