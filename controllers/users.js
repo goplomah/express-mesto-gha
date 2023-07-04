@@ -41,7 +41,7 @@ const createUser = ((req, res, next) => {
     })
       .then((user) => {
         const { _id } = user;
-        res.status(201).send({
+        res.send({
           _id, name, about, avatar, email,
         });
       }))
@@ -49,37 +49,12 @@ const createUser = ((req, res, next) => {
       if (err.name === 'ValidationError') {
         return next(new ValidationError('переданы некорректные данные при создании пользователя'));
       }
-      // if (err.code === 11000) {
-      //   return next(new DuplicateError('переданы некорректные данные при создании пользователя'));
-      // }
+      if (err.code === 11000) {
+        return next(new DuplicateError('переданы некорректные данные при создании пользователя'));
+      }
       return next(err);
     });
 });
-// ((req, res, next) => {
-//   const {
-//     name, about, avatar, email, password,
-//   } = req.body;
-
-//   bcrypt.hash(password, 10)
-//     .then((hash) => User.create({
-//       name, about, avatar, email, password: hash,
-//     })
-//     .then((user) => {
-//       res.status(201).send({
-//         name, about, avatar, email, _id: user._id,
-//       });
-//     }))
-//     .catch((err) => {
-//       if (err.name === 'ValidationError') {
-//         return next(new ValidationError('переданы некорректные данные при создании пользователя'));
-//       }
-//       if (err.code === 11000) {
-//         return next(new DuplicateError('пользователь с такой почтой уже существует'));
-//       }
-//       return next(err);
-//     }
-//     });
-//   });
 
 const updateProfile = (req, res, next) => {
   const userById = req.user._id;
