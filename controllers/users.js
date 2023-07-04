@@ -48,9 +48,9 @@ const createUser = ((req, res, next) => {
       if (err.name === 'ValidationError') {
         return next(new ValidationError('переданы некорректные данные при создании пользователя'));
       }
-      if (err.code === 11000) {
-        return next(new DuplicateError('переданы некорректные данные при создании пользователя'));
-      }
+      // if (err.code === 11000) {
+      //   return next(new DuplicateError('переданы некорректные данные при создании пользователя'));
+      // }
       return next(err);
     });
 });
